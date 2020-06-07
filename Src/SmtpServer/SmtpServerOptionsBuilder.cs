@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using SmtpServer.Authentication;
-using SmtpServer.Net;
+﻿using SmtpServer.Net;
 using SmtpServer.Storage;
+using System;
+using System.Collections.Generic;
 
 namespace SmtpServer
 {
     public sealed class SmtpServerOptionsBuilder
     {
-        readonly List<Action<SmtpServerOptions>> _setters = new List<Action<SmtpServerOptions>>();
+        private readonly List<Action<SmtpServerOptions>> _setters = new List<Action<SmtpServerOptions>>();
 
         /// <summary>
         /// Builds the options that have been set and returns the built instance.
@@ -24,10 +21,7 @@ namespace SmtpServer
                 EndpointListenerFactory = new EndpointListenerFactory(),
                 MessageStoreFactory = DoNothingMessageStore.Instance,
                 MailboxFilterFactory = DoNothingMailboxFilter.Instance,
-                UserAuthenticatorFactory = DoNothingUserAuthenticator.Instance,
                 MaxRetryCount = 5,
-                MaxAuthenticationAttempts = 3,
-                SupportedSslProtocols = SslProtocols.Tls12,
                 NetworkBufferSize = 128,
                 CommandWaitTimeout = TimeSpan.FromMinutes(5),
                 Logger = new NullLogger(),
@@ -46,18 +40,6 @@ namespace SmtpServer
         public SmtpServerOptionsBuilder ServerName(string value)
         {
             _setters.Add(options => options.ServerName = value);
-
-            return this;
-        }
-
-        /// <summary>
-        /// Sets the X509 certificate to use when starting a TLS session.
-        /// </summary>
-        /// <param name="value">The server's certificate to use when starting a TLS session.</param>
-        /// <returns>A OptionsBuilder to continue building on.</returns>
-        public SmtpServerOptionsBuilder Certificate(X509Certificate value)
-        {
-            _setters.Add(options => options.ServerCertificate = value);
 
             return this;
         }
@@ -106,11 +88,10 @@ namespace SmtpServer
         /// Adds an endpoint with the given port.
         /// </summary>
         /// <param name="port">The port to add as the endpoint.</param>
-        /// <param name="isSecure">Indicates whether the port is secure by default.</param>
         /// <returns>A OptionsBuilder to continue building on.</returns>
-        public SmtpServerOptionsBuilder Port(int port, bool isSecure)
+        public SmtpServerOptionsBuilder Port(int port)
         {
-            Endpoint(new EndpointDefinitionBuilder().Port(port).IsSecure(isSecure).Build());
+            Endpoint(new EndpointDefinitionBuilder().Port(port).Build());
 
             return this;
         }
@@ -152,18 +133,6 @@ namespace SmtpServer
         }
 
         /// <summary>
-        /// Sets the user aAuthenticator factory.
-        /// </summary>
-        /// <param name="value">The user authenticator factory.</param>
-        /// <returns>A OptionsBuilder to continue building on.</returns>
-        public SmtpServerOptionsBuilder UserAuthenticator(IUserAuthenticatorFactory value)
-        {
-            _setters.Add(options => options.UserAuthenticatorFactory = value ?? DoNothingUserAuthenticator.Instance);
-
-            return this;
-        }
-
-        /// <summary>
         /// Sets the maximum message size.
         /// </summary>
         /// <param name="value">The maximum message size to allow.</param>
@@ -200,18 +169,6 @@ namespace SmtpServer
         }
 
         /// <summary>
-        /// Sets the supported SSL protocols.
-        /// </summary>
-        /// <param name="value">The supported SSL protocols.</param>
-        /// <returns>A OptionsBuilder to continue building on.</returns>
-        public SmtpServerOptionsBuilder SupportedSslProtocols(SslProtocols value)
-        {
-            _setters.Add(options => options.SupportedSslProtocols = value);
-
-            return this;
-        }
-
-        /// <summary>
         /// Sets the size of the buffer for each read operation.
         /// </summary>
         /// <param name="value">The buffer size for each read operation.</param>
@@ -231,7 +188,7 @@ namespace SmtpServer
         public SmtpServerOptionsBuilder CommandWaitTimeout(TimeSpan value)
         {
             _setters.Add(options => options.CommandWaitTimeout = value);
-            
+
             return this;
         }
 
@@ -249,7 +206,7 @@ namespace SmtpServer
 
         #region SmtpServerOptions
 
-        class SmtpServerOptions : ISmtpServerOptions
+        private class SmtpServerOptions : ISmtpServerOptions
         {
             /// <summary>
             /// Gets or sets the maximum size of a message.
@@ -270,11 +227,6 @@ namespace SmtpServer
             /// Gets or sets the SMTP server name.
             /// </summary>
             public string ServerName { get; set; }
-
-            /// <summary>
-            /// Gets the Server Certificate to use when starting a TLS session.
-            /// </summary>
-            public X509Certificate ServerCertificate { get; set; }
 
             /// <summary>
             /// Gets or sets the endpoint to listen on.
@@ -302,16 +254,6 @@ namespace SmtpServer
             public IMailboxFilterFactory MailboxFilterFactory { get; set; }
 
             /// <summary>
-            /// Gets the user authenticator factory to use.
-            /// </summary>
-            public IUserAuthenticatorFactory UserAuthenticatorFactory { get; set; }
-
-            /// <summary>
-            /// The supported SSL protocols.
-            /// </summary>
-            public SslProtocols SupportedSslProtocols { get; set; }
-
-            /// <summary>
             /// The timeout to use when waiting for a command from the client.
             /// </summary>
             public TimeSpan CommandWaitTimeout { get; set; }
@@ -327,6 +269,6 @@ namespace SmtpServer
             public ILogger Logger { get; set; }
         }
 
-        #endregion
+        #endregion SmtpServerOptions
     }
 }

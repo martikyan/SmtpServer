@@ -1,12 +1,12 @@
-﻿using System;
+﻿using SmtpServer;
+using SmtpServer.Mail;
+using SmtpServer.Protocol;
+using SmtpServer.Storage;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer;
-using SmtpServer.Mail;
-using SmtpServer.Protocol;
-using SmtpServer.Storage;
 
 namespace SampleApp
 {

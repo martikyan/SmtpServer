@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Authentication;
-using System.Security.Cryptography.X509Certificates;
-using SmtpServer.Authentication;
-using SmtpServer.Net;
+﻿using SmtpServer.Net;
 using SmtpServer.Storage;
+using System;
+using System.Collections.Generic;
 
 namespace SmtpServer
 {
@@ -21,19 +18,9 @@ namespace SmtpServer
         int MaxRetryCount { get; }
 
         /// <summary>
-        /// The maximum number of authentication attempts.
-        /// </summary>
-        int MaxAuthenticationAttempts { get; }
-
-        /// <summary>
         /// Gets the SMTP server name.
         /// </summary>
         string ServerName { get; }
-
-        /// <summary>
-        /// Gets the Server Certificate to use when starting a TLS session.
-        /// </summary>
-        X509Certificate ServerCertificate { get; }
 
         /// <summary>
         /// Gets the collection of endpoints to listen on.
@@ -54,16 +41,6 @@ namespace SmtpServer
         /// Gets the mailbox filter factory to use.
         /// </summary>
         IMailboxFilterFactory MailboxFilterFactory { get; }
-
-        /// <summary>
-        /// Gets the user authenticator factory to use.
-        /// </summary>
-        IUserAuthenticatorFactory UserAuthenticatorFactory { get; }
-
-        /// <summary>
-        /// The supported SSL protocols.
-        /// </summary>
-        SslProtocols SupportedSslProtocols { get; }
 
         /// <summary>
         /// The timeout to use when waiting for a command from the client.

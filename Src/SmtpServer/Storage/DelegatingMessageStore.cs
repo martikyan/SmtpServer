@@ -1,5 +1,5 @@
-﻿using System;
-using SmtpServer.Protocol;
+﻿using SmtpServer.Protocol;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,7 +7,7 @@ namespace SmtpServer.Storage
 {
     public sealed class DelegatingMessageStore : MessageStore
     {
-        readonly Func<ISessionContext, IMessageTransaction, SmtpResponse> _delegate;
+        private readonly Func<ISessionContext, IMessageTransaction, SmtpResponse> _delegate;
 
         /// <summary>
         /// Constructor.
@@ -35,7 +35,7 @@ namespace SmtpServer.Storage
         /// </summary>
         /// <param name="delegate">The delegate to wrap.</param>
         /// <returns>The function that is compatible with the main signature.</returns>
-        static Func<ISessionContext, IMessageTransaction, SmtpResponse> Wrap(Action<IMessageTransaction> @delegate)
+        private static Func<ISessionContext, IMessageTransaction, SmtpResponse> Wrap(Action<IMessageTransaction> @delegate)
         {
             return (context, transaction) =>
             {
@@ -50,7 +50,7 @@ namespace SmtpServer.Storage
         /// </summary>
         /// <param name="delegate">The delegate to wrap.</param>
         /// <returns>The function that is compatible with the main signature.</returns>
-        static Func<ISessionContext, IMessageTransaction, SmtpResponse> Wrap(Func<IMessageTransaction, SmtpResponse> @delegate)
+        private static Func<ISessionContext, IMessageTransaction, SmtpResponse> Wrap(Func<IMessageTransaction, SmtpResponse> @delegate)
         {
             return (context, transaction) => @delegate(transaction);
         }
@@ -63,7 +63,7 @@ namespace SmtpServer.Storage
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The response code to return that indicates the result of the message being saved.</returns>
         public override Task<SmtpResponse> SaveAsync(
-            ISessionContext context, 
+            ISessionContext context,
             IMessageTransaction transaction,
             CancellationToken cancellationToken)
         {

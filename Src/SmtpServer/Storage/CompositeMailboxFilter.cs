@@ -1,13 +1,13 @@
-﻿using System.Linq;
+﻿using SmtpServer.Mail;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.Mail;
 
 namespace SmtpServer.Storage
 {
     internal sealed class CompositeMailboxFilter : IMailboxFilter
     {
-        readonly IMailboxFilter[] _filters;
+        private readonly IMailboxFilter[] _filters;
 
         /// <summary>
         /// Constructor.
@@ -27,8 +27,8 @@ namespace SmtpServer.Storage
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
         public async Task<MailboxFilterResult> CanAcceptFromAsync(
-            ISessionContext context, 
-            IMailbox @from, 
+            ISessionContext context,
+            IMailbox @from,
             int size,
             CancellationToken cancellationToken = default(CancellationToken))
         {
@@ -51,8 +51,8 @@ namespace SmtpServer.Storage
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
         public async Task<MailboxFilterResult> CanDeliverToAsync(
-            ISessionContext context, 
-            IMailbox to, 
+            ISessionContext context,
+            IMailbox to,
             IMailbox @from,
             CancellationToken cancellationToken = default(CancellationToken))
         {

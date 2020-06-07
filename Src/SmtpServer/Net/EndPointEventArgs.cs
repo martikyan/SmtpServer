@@ -15,12 +15,12 @@ namespace SmtpServer.Net
             EndpointDefinition = endpointDefinition;
             LocalEndPoint = localEndPoint;
         }
- 
+
         /// <summary>
         /// Returns the endpoint definition.
         /// </summary>
         public IEndpointDefinition EndpointDefinition { get; }
- 
+
         /// <summary>
         /// Returns the locally bound endpoint
         /// </summary>

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using SmtpServer.Protocol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.Protocol;
 
 namespace SmtpServer.IO
 {
@@ -119,7 +119,7 @@ namespace SmtpServer.IO
                 throw new ArgumentNullException(nameof(client));
             }
 
-            return client.WriteAsync(new [] { new ArraySegment<byte>(buffer) }, cancellationToken);
+            return client.WriteAsync(new[] { new ArraySegment<byte>(buffer) }, cancellationToken);
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace SmtpServer.IO
                 throw new ArgumentNullException(nameof(client));
             }
 
-            var newLine = new string(new[] {(char) 13, (char) 10});
+            var newLine = new string(new[] { (char)13, (char)10 });
             return client.WriteAsync(encoding.GetBytes(text + newLine), cancellationToken);
         }
 
@@ -200,7 +200,7 @@ namespace SmtpServer.IO
         /// <param name="segments">The list of segments to trim the sequence from.</param>
         /// <param name="count">The number of bytes to remove from the end.</param>
         /// <returns>The list of segments that have been trimmed by the given number of bytes.</returns>
-        static IReadOnlyList<ArraySegment<byte>> Trim(IReadOnlyList<ArraySegment<byte>> segments, int count)
+        private static IReadOnlyList<ArraySegment<byte>> Trim(IReadOnlyList<ArraySegment<byte>> segments, int count)
         {
             var list = new List<ArraySegment<byte>>(segments);
 
@@ -230,7 +230,7 @@ namespace SmtpServer.IO
         /// <param name="segment">The segment to truncate.</param>
         /// <param name="count">The number of bytes to trim.</param>
         /// <returns>The segment that represents the original segment with the given number of bytes trimmed.</returns>
-        static ArraySegment<byte> Trim(ArraySegment<byte> segment, int count)
+        private static ArraySegment<byte> Trim(ArraySegment<byte> segment, int count)
         {
             return new ArraySegment<byte>(segment.Array, segment.Offset, segment.Count - count);
         }
@@ -241,7 +241,7 @@ namespace SmtpServer.IO
         /// <param name="segments">The list of segments to trim the sequence from.</param>
         /// <param name="sequence">The sequence to trim from the end of the block.</param>
         /// <returns>The list of segments that have been trimmed and have the sequence removed.</returns>
-        static IReadOnlyList<ArraySegment<byte>> Trim(IReadOnlyList<ArraySegment<byte>> segments, byte[] sequence)
+        private static IReadOnlyList<ArraySegment<byte>> Trim(IReadOnlyList<ArraySegment<byte>> segments, byte[] sequence)
         {
             if (EndsWith(segments, sequence))
             {
@@ -257,7 +257,7 @@ namespace SmtpServer.IO
         /// <param name="segments">The segments to test the byte sequence against.</param>
         /// <param name="sequence">The sequence of bytes to test at the end of the segments.</param>
         /// <returns>true if the segments end with the given sequence, false if not.</returns>
-        static bool EndsWith(IReadOnlyList<ArraySegment<byte>> segments, byte[] sequence)
+        private static bool EndsWith(IReadOnlyList<ArraySegment<byte>> segments, byte[] sequence)
         {
             var state = sequence.Length - 1;
 
@@ -280,7 +280,7 @@ namespace SmtpServer.IO
         /// </summary>
         /// <param name="segments">The list of segments to remove the dot-stuffing from.</param>
         /// <returns>The list of segments that have the dot-stuffing removed.</returns>
-        static IEnumerable<ArraySegment<byte>> Unstuff(IReadOnlyList<ArraySegment<byte>> segments)
+        private static IEnumerable<ArraySegment<byte>> Unstuff(IReadOnlyList<ArraySegment<byte>> segments)
         {
             var sequence = new byte[] { 13, 10, 46, 46 };
             var state = 0;

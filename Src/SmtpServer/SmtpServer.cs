@@ -1,9 +1,9 @@
-﻿using System;
+﻿using SmtpServer.IO;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.IO;
 
 namespace SmtpServer
 {
@@ -24,7 +24,7 @@ namespace SmtpServer
         /// </summary>
         public event EventHandler<SessionFaultedEventArgs> SessionFaulted;
 
-        readonly ISmtpServerOptions _options;
+        private readonly ISmtpServerOptions _options;
 
         /// <summary>
         /// Constructor.
@@ -78,7 +78,7 @@ namespace SmtpServer
         /// <param name="endpointDefinition">The definition of the endpoint to listen on.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task which performs the operation.</returns>
-        async Task ListenAsync(IEndpointDefinition endpointDefinition, CancellationToken cancellationToken)
+        private async Task ListenAsync(IEndpointDefinition endpointDefinition, CancellationToken cancellationToken)
         {
             // keep track of the running tasks for disposal
             var sessions = new ConcurrentDictionary<SmtpSession, SmtpSession>();
@@ -97,12 +97,6 @@ namespace SmtpServer
 
                         sessionContext.NetworkClient = new NetworkClient(stream, _options.NetworkBufferSize);
 
-                        if (endpointDefinition.IsSecure && _options.ServerCertificate != null)
-                        {
-                            await sessionContext.NetworkClient.Stream.UpgradeAsync(_options.ServerCertificate, _options.SupportedSslProtocols, cancellationToken).ConfigureAwait(false);
-                            cancellationToken.ThrowIfCancellationRequested();
-                        }
-
                         // create a new session to handle the connection
                         var session = new SmtpSession(sessionContext);
                         sessions.TryAdd(session, session);
@@ -111,7 +105,7 @@ namespace SmtpServer
 
                         session.Run(cancellationToken);
 
-                        #pragma warning disable 4014
+#pragma warning disable 4014
                         session.Task
                             .ContinueWith(t =>
                             {
@@ -128,7 +122,7 @@ namespace SmtpServer
                                 OnSessionCompleted(new SessionEventArgs(sessionContext));
                             },
                             cancellationToken);
-                        #pragma warning restore 4014
+#pragma warning restore 4014
                     }
                     catch (OperationCanceledException) { }
                     catch (Exception ex)

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SmtpServer.Text;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using SmtpServer.Text;
 using Xunit;
 
 namespace SmtpServer.Tests
@@ -76,7 +76,7 @@ namespace SmtpServer.Tests
             Assert.Equal(TokenKind.None, tokens[1].Kind);
             Assert.Equal("+", tokens[0].Text);
         }
-        
+
         [Fact]
         public void CanTokenizeSpace()
         {
@@ -111,9 +111,9 @@ namespace SmtpServer.Tests
             Assert.Equal("come", tokens[6].Text);
         }
 
-        static IReadOnlyList<Token> Tokenize(string input)
+        private static IReadOnlyList<Token> Tokenize(string input)
         {
-            var tokenReader = new ByteArrayTokenReader(new [] { new ArraySegment<byte>(Encoding.ASCII.GetBytes(input)) });
+            var tokenReader = new ByteArrayTokenReader(new[] { new ArraySegment<byte>(Encoding.ASCII.GetBytes(input)) });
 
             return tokenReader.ToList();
         }

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using SmtpServer.IO;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.IO;
 
 namespace SmtpServer.Net
 {

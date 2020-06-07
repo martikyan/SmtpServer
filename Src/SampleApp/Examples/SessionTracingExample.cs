@@ -1,14 +1,14 @@
-﻿using System;
-using System.Threading;
-using SmtpServer;
+﻿using SmtpServer;
 using SmtpServer.Net;
 using SmtpServer.Tracing;
+using System;
+using System.Threading;
 
 namespace SampleApp.Examples
 {
     public static class SessionTracingExample
     {
-        static CancellationTokenSource _cancellationTokenSource;
+        private static CancellationTokenSource _cancellationTokenSource;
 
         public static void Run()
         {
@@ -31,19 +31,19 @@ namespace SampleApp.Examples
             serverTask.WaitWithoutException();
         }
 
-        static void OnSessionCreated(object sender, SessionEventArgs e)
+        private static void OnSessionCreated(object sender, SessionEventArgs e)
         {
             Console.WriteLine("SessionCreated: {0}", e.Context.Properties[EndpointListener.RemoteEndPointKey]);
 
             e.Context.CommandExecuting += OnCommandExecuting;
         }
 
-        static void OnCommandExecuting(object sender, SmtpCommandExecutingEventArgs e)
+        private static void OnCommandExecuting(object sender, SmtpCommandExecutingEventArgs e)
         {
             new TracingSmtpCommandVisitor(Console.Out).Visit(e.Command);
         }
 
-        static void OnSessionCompleted(object sender, SessionEventArgs e)
+        private static void OnSessionCompleted(object sender, SessionEventArgs e)
         {
             Console.WriteLine("SessionCompleted: {0}", e.Context.Properties[EndpointListener.RemoteEndPointKey]);
 

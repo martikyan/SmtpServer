@@ -1,10 +1,10 @@
-﻿using System.Net;
-using System.Threading;
-using System.Threading.Tasks;
-using SmtpServer;
+﻿using SmtpServer;
 using SmtpServer.Mail;
 using SmtpServer.Net;
 using SmtpServer.Storage;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace SampleApp
 {
@@ -19,8 +19,8 @@ namespace SampleApp
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
         public override Task<MailboxFilterResult> CanAcceptFromAsync(
-            ISessionContext context, 
-            IMailbox @from, 
+            ISessionContext context,
+            IMailbox @from,
             int size,
             CancellationToken cancellationToken)
         {
@@ -30,7 +30,7 @@ namespace SampleApp
             }
 
             var endpoint = (IPEndPoint)context.Properties[EndpointListener.RemoteEndPointKey];
-            
+
             if (endpoint.Address.Equals(IPAddress.Parse("127.0.0.1")))
             {
                 return Task.FromResult(MailboxFilterResult.Yes);
@@ -48,8 +48,8 @@ namespace SampleApp
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
         public override Task<MailboxFilterResult> CanDeliverToAsync(
-            ISessionContext context, 
-            IMailbox to, 
+            ISessionContext context,
+            IMailbox to,
             IMailbox @from,
             CancellationToken cancellationToken)
         {

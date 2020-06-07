@@ -25,7 +25,7 @@ namespace SmtpServer.Protocol
         /// </summary>
         /// <param name="context">The execution context to operate on.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns true if the command executed successfully such that the transition to the next state should occurr, false 
+        /// <returns>Returns true if the command executed successfully such that the transition to the next state should occurr, false
         /// if the current state is to be maintained.</returns>
         internal abstract Task<bool> ExecuteAsync(SmtpSessionContext context, CancellationToken cancellationToken);
 

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using SmtpServer.Mail;
+﻿using SmtpServer.Mail;
+using System.Collections.Generic;
 
 namespace SmtpServer
 {

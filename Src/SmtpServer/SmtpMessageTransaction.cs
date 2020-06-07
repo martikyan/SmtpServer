@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using SmtpServer.Mail;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using SmtpServer.Mail;
 
 namespace SmtpServer
 {

@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using SmtpServer.IO;
+using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.IO;
 
 namespace SmtpServer.Mail
 {

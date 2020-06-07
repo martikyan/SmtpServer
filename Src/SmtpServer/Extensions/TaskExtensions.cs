@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace SmtpServer
 {
-    static class TaskExtensions
+    internal static class TaskExtensions
     {
         /// <summary>
         /// Configures the task to stop waiting when the cancellation has been requested.

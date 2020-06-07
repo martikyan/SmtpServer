@@ -4,7 +4,7 @@ namespace SmtpServer.Text
 {
     public sealed class TokenEnumerator : ITokenEnumerator
     {
-        int _index = -1;
+        private int _index = -1;
 
         /// <summary>
         /// Constructor.
@@ -20,7 +20,7 @@ namespace SmtpServer.Text
         {
             Tokens = tokens;
         }
-        
+
         /// <summary>
         /// Peek at the next token.
         /// </summary>
@@ -43,7 +43,7 @@ namespace SmtpServer.Text
         /// Returns the token at the given index.
         /// </summary>
         /// <returns>The last token that was consumed.</returns>
-        Token At(int index)
+        private Token At(int index)
         {
             return index < Tokens.Count ? Tokens[index] : Token.None;
         }
@@ -69,10 +69,10 @@ namespace SmtpServer.Text
 
         #region TokenEnumeratorCheckpoint
 
-        class TokenEnumeratorCheckpoint : ITokenEnumeratorCheckpoint
+        private class TokenEnumeratorCheckpoint : ITokenEnumeratorCheckpoint
         {
-            readonly TokenEnumerator _enumerator;
-            readonly int _index;
+            private readonly TokenEnumerator _enumerator;
+            private readonly int _index;
 
             /// <summary>
             /// Constructor.
@@ -98,6 +98,6 @@ namespace SmtpServer.Text
             public void Dispose() { }
         }
 
-        #endregion
+        #endregion TokenEnumeratorCheckpoint
     }
 }

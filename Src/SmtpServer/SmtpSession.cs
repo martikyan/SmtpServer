@@ -1,19 +1,19 @@
-﻿using System;
+﻿using SmtpServer.IO;
+using SmtpServer.Protocol;
+using SmtpServer.Text;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.Protocol;
-using System.Reflection;
-using SmtpServer.IO;
-using SmtpServer.Text;
 
 namespace SmtpServer
 {
     internal sealed class SmtpSession
     {
-        readonly SmtpStateMachine _stateMachine;
-        readonly SmtpSessionContext _context;
-        TaskCompletionSource<bool> _taskCompletionSource;
+        private readonly SmtpStateMachine _stateMachine;
+        private readonly SmtpSessionContext _context;
+        private TaskCompletionSource<bool> _taskCompletionSource;
 
         /// <summary>
         /// Constructor.
@@ -39,12 +39,12 @@ namespace SmtpServer
                     if (t.Exception != null)
                     {
                         _taskCompletionSource.SetException(t.Exception);
-                        
+
                         return;
                     }
 
                     _taskCompletionSource.SetResult(t.IsCompleted);
-                }, 
+                },
                 cancellationToken);
         }
 
@@ -53,7 +53,7 @@ namespace SmtpServer
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task which performs the operation.</returns>
-        async Task RunAsync(CancellationToken cancellationToken)
+        private async Task RunAsync(CancellationToken cancellationToken)
         {
             if (cancellationToken.IsCancellationRequested)
             {
@@ -71,7 +71,7 @@ namespace SmtpServer
         /// <param name="context">The session context to execute the command handler against.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task which asynchronously performs the execution.</returns>
-        async Task ExecuteAsync(SmtpSessionContext context, CancellationToken cancellationToken)
+        private async Task ExecuteAsync(SmtpSessionContext context, CancellationToken cancellationToken)
         {
             var retries = _context.ServerOptions.MaxRetryCount;
 
@@ -89,7 +89,7 @@ namespace SmtpServer
                     await context.NetworkClient.ReplyAsync(CreateErrorResponse(response, retries), cancellationToken).ConfigureAwait(false);
                     continue;
                 }
-                
+
                 try
                 {
                     if (await ExecuteAsync(command, context, cancellationToken).ConfigureAwait(false))
@@ -124,12 +124,12 @@ namespace SmtpServer
         /// <param name="context">The session context to execute the command handler against.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The input that was received from the client.</returns>
-        async Task<IReadOnlyList<ArraySegment<byte>>> ReadCommandInputAsync(SmtpSessionContext context, CancellationToken cancellationToken)
+        private async Task<IReadOnlyList<ArraySegment<byte>>> ReadCommandInputAsync(SmtpSessionContext context, CancellationToken cancellationToken)
         {
             var timeout = new CancellationTokenSource(_context.ServerOptions.CommandWaitTimeout);
 
             var cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token, cancellationToken);
-           
+
             try
             {
                 return await context.NetworkClient.ReadLineAsync(cancellationTokenSource.Token).ConfigureAwait(false);
@@ -158,7 +158,7 @@ namespace SmtpServer
         /// <param name="response">The original response to wrap with the error message information.</param>
         /// <param name="retries">The number of retries remaining before the session is terminated.</param>
         /// <returns>The response that wraps the original response with the additional error information.</returns>
-        static SmtpResponse CreateErrorResponse(SmtpResponse response, int retries)
+        private static SmtpResponse CreateErrorResponse(SmtpResponse response, int retries)
         {
             return new SmtpResponse(response.ReplyCode, $"{response.Message}, {retries} retry(ies) remaining.");
         }
@@ -171,7 +171,7 @@ namespace SmtpServer
         /// <param name="command">The command that was found.</param>
         /// <param name="errorResponse">The error response that indicates why a command could not be accepted.</param>
         /// <returns>true if a valid command was found, false if not.</returns>
-        bool TryMake(SmtpSessionContext context, IReadOnlyList<ArraySegment<byte>> segments, out SmtpCommand command, out SmtpResponse errorResponse)
+        private bool TryMake(SmtpSessionContext context, IReadOnlyList<ArraySegment<byte>> segments, out SmtpCommand command, out SmtpResponse errorResponse)
         {
             var tokenEnumerator = new TokenEnumerator(new ByteArrayTokenReader(segments));
 
@@ -185,7 +185,7 @@ namespace SmtpServer
         /// <param name="context">The execution context to operate on.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task which asynchronously performs the execution.</returns>
-        Task<bool> ExecuteAsync(SmtpCommand command, SmtpSessionContext context, CancellationToken cancellationToken)
+        private Task<bool> ExecuteAsync(SmtpCommand command, SmtpSessionContext context, CancellationToken cancellationToken)
         {
             context.RaiseCommandExecuting(command);
 
@@ -197,14 +197,14 @@ namespace SmtpServer
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>A task which performs the operation.</returns>
-        async Task OutputGreetingAsync(CancellationToken cancellationToken)
+        private async Task OutputGreetingAsync(CancellationToken cancellationToken)
         {
             var version = typeof(SmtpSession).GetTypeInfo().Assembly.GetName().Version;
 
             await _context.NetworkClient.WriteLineAsync($"220 {_context.ServerOptions.ServerName} v{version} ESMTP ready", cancellationToken).ConfigureAwait(false);
             await _context.NetworkClient.FlushAsync(cancellationToken).ConfigureAwait(false);
         }
-        
+
         /// <summary>
         /// Returns the completion task.
         /// </summary>

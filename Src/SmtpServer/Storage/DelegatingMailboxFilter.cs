@@ -1,17 +1,17 @@
-﻿using System;
+﻿using SmtpServer.Mail;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.Mail;
 
 namespace SmtpServer.Storage
 {
     public sealed class DelegatingMailboxFilter : MailboxFilter
     {
-        static readonly Func<ISessionContext, IMailbox, MailboxFilterResult> EmptyAcceptDelegate = (context, @from) => MailboxFilterResult.Yes;
-        static readonly Func<ISessionContext, IMailbox, IMailbox, MailboxFilterResult> EmptyDeliverDelegate = (context, to, @from) => MailboxFilterResult.Yes;
+        private static readonly Func<ISessionContext, IMailbox, MailboxFilterResult> EmptyAcceptDelegate = (context, @from) => MailboxFilterResult.Yes;
+        private static readonly Func<ISessionContext, IMailbox, IMailbox, MailboxFilterResult> EmptyDeliverDelegate = (context, to, @from) => MailboxFilterResult.Yes;
 
-        readonly Func<ISessionContext, IMailbox, MailboxFilterResult> _canAcceptDelegate;
-        readonly Func<ISessionContext, IMailbox, IMailbox, MailboxFilterResult> _canDeliverDelegate;
+        private readonly Func<ISessionContext, IMailbox, MailboxFilterResult> _canAcceptDelegate;
+        private readonly Func<ISessionContext, IMailbox, IMailbox, MailboxFilterResult> _canDeliverDelegate;
 
         /// <summary>
         /// Constructor.
@@ -24,7 +24,7 @@ namespace SmtpServer.Storage
         /// Constructor.
         /// </summary>
         /// <param name="canAcceptDelegate">The delegate to accept a mailbox.</param>
-        public DelegatingMailboxFilter(Func<ISessionContext, IMailbox, MailboxFilterResult> canAcceptDelegate) 
+        public DelegatingMailboxFilter(Func<ISessionContext, IMailbox, MailboxFilterResult> canAcceptDelegate)
             : this(canAcceptDelegate, EmptyDeliverDelegate) { }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace SmtpServer.Storage
         /// </summary>
         /// <param name="delegate">The delegate to wrap.</param>
         /// <returns>The function that is compatible with the main signature.</returns>
-        static Func<ISessionContext, IMailbox, MailboxFilterResult> Wrap(Func<IMailbox, MailboxFilterResult> @delegate)
+        private static Func<ISessionContext, IMailbox, MailboxFilterResult> Wrap(Func<IMailbox, MailboxFilterResult> @delegate)
         {
             return (context, @from) => @delegate(@from);
         }
@@ -69,7 +69,7 @@ namespace SmtpServer.Storage
         /// </summary>
         /// <param name="delegate">The delegate to wrap.</param>
         /// <returns>The function that is compatible with the main signature.</returns>
-        static Func<ISessionContext, IMailbox, IMailbox, MailboxFilterResult> Wrap(Func<IMailbox, IMailbox, MailboxFilterResult> @delegate)
+        private static Func<ISessionContext, IMailbox, IMailbox, MailboxFilterResult> Wrap(Func<IMailbox, IMailbox, MailboxFilterResult> @delegate)
         {
             return (context, to, @from) => @delegate(to, @from);
         }

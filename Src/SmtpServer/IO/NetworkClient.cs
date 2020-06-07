@@ -7,11 +7,11 @@ namespace SmtpServer.IO
 {
     public sealed class NetworkClient : INetworkClient
     {
-        readonly int _bufferLength;
-        readonly INetworkStream _stream;
-        byte[] _buffer;
-        int _bytesRead = -1;
-        int _index;
+        private readonly int _bufferLength;
+        private readonly INetworkStream _stream;
+        private byte[] _buffer;
+        private int _bytesRead = -1;
+        private int _index;
 
         /// <summary>
         /// Constructor.
@@ -31,7 +31,7 @@ namespace SmtpServer.IO
         {
             _stream.Dispose();
         }
-        
+
         /// <summary>
         /// Returns a series a buffer segments until the continuation predicate indicates that the method should complete.
         /// </summary>
@@ -105,7 +105,7 @@ namespace SmtpServer.IO
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Returns a value indicating whether there was no more data to fill the buffer.</returns>
-        async Task<bool> ReadBufferAsync(CancellationToken cancellationToken)
+        private async Task<bool> ReadBufferAsync(CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -126,7 +126,7 @@ namespace SmtpServer.IO
         /// <param name="limit">The limit to the number of bytes to read.</param>
         /// <param name="buffer">The buffer that contains the data that was consumed.</param>
         /// <returns>true if the operation should continue reading, false if not.</returns>
-        bool TryConsume(Func<byte, bool> @continue, ref long limit, out ArraySegment<byte> buffer)
+        private bool TryConsume(Func<byte, bool> @continue, ref long limit, out ArraySegment<byte> buffer)
         {
             var start = _index;
 

@@ -6,14 +6,12 @@ namespace SampleApp
     public static class SampleMailClient
     {
         public static void Send(
-            string from = null, 
-            string to = null, 
+            string from = null,
+            string to = null,
             string subject = null,
-            string user = null, 
-            string password = null,
+            string user = null,
             MimeEntity body = null,
-            int count = 1,
-            bool useSsl = false)
+            int count = 1)
         {
             var message = new MimeMessage();
 
@@ -27,12 +25,7 @@ namespace SampleApp
 
             using (var client = new SmtpClient())
             {
-                client.Connect("localhost", 9025, useSsl);
-
-                if (user != null && password != null)
-                {
-                    client.Authenticate(user, password);
-                }
+                client.Connect("localhost", 9025, false);
 
                 while (count-- > 0)
                 {

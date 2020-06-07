@@ -7,9 +7,9 @@ namespace SmtpServer.Text
 {
     internal sealed class ByteArrayTokenReader : TokenReader
     {
-        readonly IReadOnlyList<ArraySegment<byte>> _segments;
-        int _index = 0;
-        int _position = 0;
+        private readonly IReadOnlyList<ArraySegment<byte>> _segments;
+        private int _index = 0;
+        private int _position = 0;
 
         /// <summary>
         /// Constructor.
@@ -54,7 +54,7 @@ namespace SmtpServer.Text
         /// </summary>
         /// <param name="value">The character to create the token for.</param>
         /// <returns>The token that represents the given character.</returns>
-        Token OtherToken(byte value)
+        private Token OtherToken(byte value)
         {
             _position++;
 
@@ -70,7 +70,7 @@ namespace SmtpServer.Text
         /// Returns a TextValue token from the current position.
         /// </summary>
         /// <returns>The text token that was found at the current position.</returns>
-        Token TextToken()
+        private Token TextToken()
         {
             return Token.Create(Consume(Token.IsText));
         }
@@ -79,7 +79,7 @@ namespace SmtpServer.Text
         /// Returns a Number token from the current position.
         /// </summary>
         /// <returns>The number token that was found at the current position.</returns>
-        Token NumberToken()
+        private Token NumberToken()
         {
             return Token.Create(TokenKind.Number, Consume(Token.IsNumber));
         }
@@ -88,7 +88,7 @@ namespace SmtpServer.Text
         /// Returns a New Line token from the current position.
         /// </summary>
         /// <returns>The new line token that was found at the current position.</returns>
-        Token NewLineToken()
+        private Token NewLineToken()
         {
             var state = 0;
             var text = Consume(b =>
@@ -98,7 +98,7 @@ namespace SmtpServer.Text
                     case 0:
                         state = b == 13 ? 1 : 0;
                         return state == 1;
-                        
+
                     case 1:
                         state = b == 10 ? 2 : 0;
                         return state == 2;
@@ -114,7 +114,7 @@ namespace SmtpServer.Text
         /// </summary>
         /// <param name="predicate">The predicate to apply to the characters for the continuous segment.</param>
         /// <returns>The text that defines a continuous segment of characters that have matched the predicate.</returns>
-        string Consume(Func<byte, bool> predicate)
+        private string Consume(Func<byte, bool> predicate)
         {
             return String.Concat(ConsumeIterator(predicate).Select(segment => Encoding.UTF8.GetString(segment.Array, segment.Offset, segment.Count)));
         }
@@ -124,7 +124,7 @@ namespace SmtpServer.Text
         /// </summary>
         /// <param name="predicate">The predicate to apply to the characters for the continuous segment.</param>
         /// <returns>The array segment that defines a continuous segment of characters that have matched the predicate.</returns>
-        IEnumerable<ArraySegment<byte>> ConsumeIterator(Func<byte, bool> predicate)
+        private IEnumerable<ArraySegment<byte>> ConsumeIterator(Func<byte, bool> predicate)
         {
             var @continue = true;
             while (EnsureDataIsAvailable() && @continue)
@@ -146,7 +146,7 @@ namespace SmtpServer.Text
         /// <param name="predicate">The predicate to apply to the characters in the segment</param>
         /// <param name="segment">The segment that was matched.</param>
         /// <returns>true if a segment was consumed, false if not.</returns>
-        bool TryConsume(Func<byte, bool> predicate, out ArraySegment<byte> segment)
+        private bool TryConsume(Func<byte, bool> predicate, out ArraySegment<byte> segment)
         {
             var current = _segments[_index];
             var start = _position;
@@ -165,7 +165,7 @@ namespace SmtpServer.Text
         /// Ensure that data is available for the operation.
         /// </summary>
         /// <returns>true if there is data available, false if not.</returns>
-        bool EnsureDataIsAvailable()
+        private bool EnsureDataIsAvailable()
         {
             if (_index < _segments.Count && _position >= _segments[_index].Count)
             {

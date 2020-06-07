@@ -1,7 +1,7 @@
-using System;
-using System.IO;
 using MimeKit;
 using SmtpServer.Mail;
+using System;
+using System.IO;
 
 namespace SmtpServer.Tests
 {
@@ -38,12 +38,12 @@ namespace SmtpServer.Tests
                 throw new ArgumentNullException(nameof(messageTransaction));
             }
 
-            var textMessage = (ITextMessage) messageTransaction.Message;
+            var textMessage = (ITextMessage)messageTransaction.Message;
             textMessage.Content.Position = 0;
 
             var message = MimeKit.MimeMessage.Load(textMessage.Content);
 
-            return ((TextPart) message.Body).GetText(charset).TrimEnd('\n', '\r');
+            return ((TextPart)message.Body).GetText(charset).TrimEnd('\n', '\r');
         }
 
         /// <summary>

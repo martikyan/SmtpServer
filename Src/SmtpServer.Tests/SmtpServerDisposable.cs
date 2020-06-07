@@ -4,7 +4,7 @@ namespace SmtpServer.Tests
 {
     internal sealed class SmtpServerDisposable : IDisposable
     {
-        readonly Action _delegate;
+        private readonly Action _delegate;
 
         /// <summary>
         /// Constructor.

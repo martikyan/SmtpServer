@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using SmtpServer.Protocol;
+using SmtpServer.Storage;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.Protocol;
-using SmtpServer.Storage;
 
 namespace SmtpServer.Tests.Mocks
 {

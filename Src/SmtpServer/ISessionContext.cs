@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SmtpServer.IO;
+using System;
 using System.Collections.Generic;
-using SmtpServer.IO;
 
 namespace SmtpServer
 {

@@ -10,9 +10,9 @@ namespace SmtpServer.IO
 {
     internal sealed class NetworkStream : INetworkStream
     {
-        readonly Action _disposeAction;
-        Stream _stream;
-        bool _disposed;
+        private readonly Action _disposeAction;
+        private Stream _stream;
+        private bool _disposed;
 
         /// <summary>
         /// Constructor.
@@ -81,7 +81,7 @@ namespace SmtpServer.IO
         /// Releases the unmanaged resources used by the stream and optionally releases the managed resources.
         /// </summary>
         /// <param name="disposing">true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
-        void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposed == false)
             {

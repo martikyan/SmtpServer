@@ -1,6 +1,6 @@
-﻿using System.Threading;
+﻿using SmtpServer.Mail;
+using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.Mail;
 
 namespace SmtpServer.Storage
 {
@@ -15,8 +15,8 @@ namespace SmtpServer.Storage
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
         Task<MailboxFilterResult> CanAcceptFromAsync(
-            ISessionContext context, 
-            IMailbox from, 
+            ISessionContext context,
+            IMailbox from,
             int size,
             CancellationToken cancellationToken);
 
@@ -29,9 +29,9 @@ namespace SmtpServer.Storage
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The acceptance state of the mailbox.</returns>
         Task<MailboxFilterResult> CanDeliverToAsync(
-            ISessionContext context, 
-            IMailbox to, 
-            IMailbox from, 
+            ISessionContext context,
+            IMailbox to,
+            IMailbox from,
             CancellationToken cancellationToken);
     }
 }

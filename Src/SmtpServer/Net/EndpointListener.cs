@@ -1,8 +1,8 @@
-﻿using System;
+﻿using SmtpServer.IO;
+using System;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.IO;
 using NetworkStream = SmtpServer.IO.NetworkStream;
 
 namespace SmtpServer.Net
@@ -12,9 +12,9 @@ namespace SmtpServer.Net
         public const string LocalEndPointKey = "EndpointListener:LocalEndPoint";
         public const string RemoteEndPointKey = "EndpointListener:RemoteEndPoint";
 
-        readonly IEndpointDefinition _endpointDefinition;
-        readonly TcpListener _tcpListener;
-        readonly Action _disposeAction;
+        private readonly IEndpointDefinition _endpointDefinition;
+        private readonly TcpListener _tcpListener;
+        private readonly Action _disposeAction;
 
         /// <summary>
         /// Constructor.

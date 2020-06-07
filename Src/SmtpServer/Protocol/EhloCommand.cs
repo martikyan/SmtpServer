@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using SmtpServer.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer.IO;
 
 namespace SmtpServer.Protocol
 {
@@ -25,7 +25,7 @@ namespace SmtpServer.Protocol
         /// </summary>
         /// <param name="context">The execution context to operate on.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Returns true if the command executed successfully such that the transition to the next state should occurr, false 
+        /// <returns>Returns true if the command executed successfully such that the transition to the next state should occurr, false
         /// if the current state is to be maintained.</returns>
         internal override async Task<bool> ExecuteAsync(SmtpSessionContext context, CancellationToken cancellationToken)
         {
@@ -48,41 +48,16 @@ namespace SmtpServer.Protocol
         /// </summary>
         /// <param name="session">The session the is currently operating.</param>
         /// <returns>The list of extensions that are allowed for the session.</returns>
-        IEnumerable<string> GetExtensions(SmtpSessionContext session)
+        private IEnumerable<string> GetExtensions(SmtpSessionContext session)
         {
             yield return "PIPELINING";
             yield return "8BITMIME";
             yield return "SMTPUTF8";
 
-            if (session.NetworkClient.Stream.IsSecure == false && Options.ServerCertificate != null)
-            {
-                yield return "STARTTLS";
-            }
-
             if (Options.MaxMessageSize > 0)
             {
                 yield return $"SIZE {Options.MaxMessageSize}";
             }
-
-            if (IsPlainLoginAllowed(session))
-            {
-                yield return "AUTH PLAIN LOGIN";
-            }
-        }
-
-        /// <summary>
-        /// Returns a value indicating whether or not plain login is allowed.
-        /// </summary>
-        /// <param name="session">The current session.</param>
-        /// <returns>true if plain login is allowed for the session, false if not.</returns>
-        bool IsPlainLoginAllowed(SmtpSessionContext session)
-        {
-            if (Options.UserAuthenticatorFactory == null)
-            {
-                return false;
-            }
-
-            return session.NetworkClient.Stream.IsSecure || session.EndpointDefinition.AllowUnsecureAuthentication;
         }
 
         /// <summary>

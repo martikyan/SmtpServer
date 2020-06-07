@@ -1,20 +1,17 @@
-﻿using System;
-using System.Net;
-using System.Security.Authentication;
-using System.Threading;
-using System.Threading.Tasks;
-using SampleApp.Examples;
+﻿using SampleApp.Examples;
 using SmtpServer;
-using SmtpServer.Authentication;
 using SmtpServer.Net;
 using SmtpServer.Tests;
 using SmtpServer.Tracing;
+using System;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace SampleApp
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             //CustomEndpointListenerExample.Run();
 
@@ -50,27 +47,28 @@ namespace SampleApp
             //await serverTask.ConfigureAwait(false);
 
             CustomEndpointListenerExample.Run();
+            Console.ReadKey();
         }
 
-        static void OnSessionFaulted(object sender, SessionFaultedEventArgs e)
+        private static void OnSessionFaulted(object sender, SessionFaultedEventArgs e)
         {
             Console.WriteLine("SessionFaulted: {0}", e.Context.Properties[EndpointListener.RemoteEndPointKey]);
             Console.WriteLine(e.Exception.Message);
         }
 
-        static void OnSessionCreated(object sender, SessionEventArgs e)
+        private static void OnSessionCreated(object sender, SessionEventArgs e)
         {
             Console.WriteLine("SessionCreated: {0}", e.Context.Properties[EndpointListener.RemoteEndPointKey]);
 
             e.Context.CommandExecuting += OnCommandExecuting;
         }
 
-        static void OnCommandExecuting(object sender, SmtpCommandExecutingEventArgs e)
+        private static void OnCommandExecuting(object sender, SmtpCommandExecutingEventArgs e)
         {
             new TracingSmtpCommandVisitor(Console.Out).Visit(e.Command);
         }
 
-        static void OnSessionCompleted(object sender, SessionEventArgs e)
+        private static void OnSessionCompleted(object sender, SessionEventArgs e)
         {
             Console.WriteLine("SessionCompleted: {0}", e.Context.Properties[EndpointListener.RemoteEndPointKey]);
 
@@ -80,7 +78,7 @@ namespace SampleApp
         //static void Main(string[] args)
         //{
         //    var cancellationTokenSource = new CancellationTokenSource();
-            
+
         //    if (args == null || args.Length == 0)
         //    {
         //        var serverTask = RunServerAsync(cancellationTokenSource.Token);

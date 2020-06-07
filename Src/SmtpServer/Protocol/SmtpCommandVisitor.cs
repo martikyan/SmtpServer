@@ -10,12 +10,6 @@ namespace SmtpServer.Protocol
         /// <param name="command"></param>
         public void Visit(SmtpCommand command)
         {
-            if (command is AuthCommand)
-            {
-                Visit((AuthCommand)command);
-                return;
-            }
-
             if (command is DataCommand)
             {
                 Visit((DataCommand)command);
@@ -78,12 +72,6 @@ namespace SmtpServer.Protocol
 
             throw new NotSupportedException(command.ToString());
         }
-
-        /// <summary>
-        /// Visit an AUTH command.
-        /// </summary>
-        /// <param name="command">The command that is being visited.</param>
-        protected virtual void Visit(AuthCommand command) { }
 
         /// <summary>
         /// Visit an DATA command.

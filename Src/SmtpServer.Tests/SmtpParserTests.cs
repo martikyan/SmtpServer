@@ -1,21 +1,21 @@
-﻿using System;
+﻿using SmtpServer.Protocol;
+using SmtpServer.Text;
+using System;
 using System.Net;
 using System.Text;
-using SmtpServer.Protocol;
-using SmtpServer.Text;
 using Xunit;
 
 namespace SmtpServer.Tests
 {
     public class SmtpParserTests
     {
-        static SmtpParser CreateParser(string text)
+        private static SmtpParser CreateParser(string text)
         {
             var segment = new ArraySegment<byte>(Encoding.UTF8.GetBytes(text));
 
             var options = new SmtpServerOptionsBuilder().Logger(new NullLogger()).Build();
 
-            return new SmtpParser(options, new TokenEnumerator(new ByteArrayTokenReader(new [] { segment })));
+            return new SmtpParser(options, new TokenEnumerator(new ByteArrayTokenReader(new[] { segment })));
         }
 
         [Fact]
@@ -110,38 +110,6 @@ namespace SmtpServer.Tests
             Assert.True(result);
             Assert.True(command is EhloCommand);
             Assert.Equal(ipOrDomainPart, ((EhloCommand)command).DomainOrAddress);
-        }
-
-        [Fact]
-        public void CanMakeAuthPlain()
-        {
-            // arrange
-            var parser = CreateParser("AUTH PLAIN Y2Fpbi5vc3VsbGl2YW5AZ21haWwuY29t");
-
-            // act
-            var result = parser.TryMakeAuth(out var command, out var errorResponse);
-
-            // assert
-            Assert.True(result);
-            Assert.True(command is AuthCommand);
-            Assert.Equal(AuthenticationMethod.Plain, ((AuthCommand)command).Method);
-            Assert.Equal("Y2Fpbi5vc3VsbGl2YW5AZ21haWwuY29t", ((AuthCommand)command).Parameter);
-        }
-
-        [Fact]
-        public void CanMakeAuthLogin()
-        {
-            // arrange
-            var parser = CreateParser("AUTH LOGIN Y2Fpbi5vc3VsbGl2YW5AZ21haWwuY29t");
-
-            // act
-            var result = parser.TryMakeAuth(out var command, out var errorResponse);
-
-            // assert
-            Assert.True(result);
-            Assert.True(command is AuthCommand);
-            Assert.Equal(AuthenticationMethod.Login, ((AuthCommand)command).Method);
-            Assert.Equal("Y2Fpbi5vc3VsbGl2YW5AZ21haWwuY29t", ((AuthCommand)command).Parameter);
         }
 
         [Theory]

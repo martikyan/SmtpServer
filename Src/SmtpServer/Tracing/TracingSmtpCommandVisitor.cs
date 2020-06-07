@@ -1,14 +1,14 @@
+using SmtpServer.Mail;
+using SmtpServer.Protocol;
 using System;
 using System.IO;
 using System.Linq;
-using SmtpServer.Mail;
-using SmtpServer.Protocol;
 
 namespace SmtpServer.Tracing
 {
     public sealed class TracingSmtpCommandVisitor : SmtpCommandVisitor
     {
-        readonly TextWriter _output;
+        private readonly TextWriter _output;
 
         /// <summary>
         /// Constructor.
@@ -25,15 +25,6 @@ namespace SmtpServer.Tracing
         }
 
         /// <summary>
-        /// Visit an AUTH command.
-        /// </summary>
-        /// <param name="command">The command that is being visited.</param>
-        protected override void Visit(AuthCommand command)
-        {
-            _output.WriteLine("AUTH: Method={0}, Parameter={1}", command.Method, command.Parameter);
-        }
-
-        /// <summary>
         /// Visit an DATA command.
         /// </summary>
         /// <param name="command">The command that is being visited.</param>
@@ -41,7 +32,7 @@ namespace SmtpServer.Tracing
         {
             _output.WriteLine("DATA");
         }
-        
+
         /// <summary>
         /// Visit a HELO command.
         /// </summary>
@@ -66,7 +57,7 @@ namespace SmtpServer.Tracing
         /// <param name="command">The command that is being visited.</param>
         protected override void Visit(MailCommand command)
         {
-            _output.WriteLine("MAIL: Address={0} Parameters={1}", 
+            _output.WriteLine("MAIL: Address={0} Parameters={1}",
                 command.Address.AsAddress(),
                 String.Join(",", command.Parameters.Select(kvp => $"{kvp.Key}={kvp.Value}")));
         }

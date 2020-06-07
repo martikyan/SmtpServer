@@ -1,13 +1,13 @@
-﻿using System.Linq;
+﻿using SmtpServer.IO;
+using System.Linq;
 using System.Text;
-using SmtpServer.IO;
 using Xunit;
 
 namespace SmtpServer.Tests
 {
     public sealed class NetworkClientTests
     {
-        static INetworkClient CreateNetworkClient(string text, int bufferLength = 64)
+        private static INetworkClient CreateNetworkClient(string text, int bufferLength = 64)
         {
             var stream = new System.IO.MemoryStream(Encoding.ASCII.GetBytes(text));
 

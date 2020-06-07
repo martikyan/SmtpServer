@@ -35,7 +35,7 @@ namespace SmtpServer.Text
         /// </summary>
         /// <param name="reader">The reader to return the list of tokens from.</param>
         /// <returns>The list of tokens from the token reader.</returns>
-        static IEnumerable<Token> ToEnumerable(TokenReader reader)
+        private static IEnumerable<Token> ToEnumerable(TokenReader reader)
         {
             Token token;
             while ((token = reader.NextToken()) != Token.None)

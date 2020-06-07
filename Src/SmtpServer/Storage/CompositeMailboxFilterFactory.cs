@@ -4,7 +4,7 @@ namespace SmtpServer.Storage
 {
     internal sealed class CompositeMailboxFilterFactory : IMailboxFilterFactory
     {
-        readonly IMailboxFilterFactory[] _factories;
+        private readonly IMailboxFilterFactory[] _factories;
 
         /// <summary>
         /// Constructor.

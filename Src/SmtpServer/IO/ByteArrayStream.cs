@@ -7,10 +7,10 @@ namespace SmtpServer.IO
 {
     internal sealed class ByteArrayStream : Stream
     {
-        readonly IReadOnlyList<ArraySegment<byte>> _segments;
-        readonly int _length;
-        int _index = 0;
-        int _position = 0;
+        private readonly IReadOnlyList<ArraySegment<byte>> _segments;
+        private readonly int _length;
+        private int _index = 0;
+        private int _position = 0;
 
         /// <summary>
         /// Constructor.
@@ -90,7 +90,7 @@ namespace SmtpServer.IO
         /// Ensure that data is available for the operation.
         /// </summary>
         /// <returns>true if there is data available, false if not.</returns>
-        bool EnsureDataIsAvailable()
+        private bool EnsureDataIsAvailable()
         {
             if (_index < _segments.Count && _position >= _segments[_index].Count)
             {

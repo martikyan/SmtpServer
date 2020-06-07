@@ -27,7 +27,7 @@ namespace SmtpServer.Protocol
         {
             context.Properties.Add(ProxySourceEndpointKey, SourceEndpoint);
             context.Properties.Add(ProxyDestinationEndpointKey, DestinationEndpoint);
-            
+
             // Do not transition smtp protocol state for these commands.
             return Task.FromResult(false);
         }

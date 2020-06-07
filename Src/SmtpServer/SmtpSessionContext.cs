@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Net;
 using SmtpServer.IO;
 using SmtpServer.Protocol;
+using System;
+using System.Collections.Generic;
 
 namespace SmtpServer
 {
@@ -67,7 +66,7 @@ namespace SmtpServer
         /// Gets the current transaction.
         /// </summary>
         public SmtpMessageTransaction Transaction { get; }
-        
+
         /// <summary>
         /// Returns the authentication context.
         /// </summary>
@@ -87,7 +86,5 @@ namespace SmtpServer
         /// Returns a set of propeties for the current session.
         /// </summary>
         public IDictionary<string, object> Properties { get; }
-
-     
     }
 }

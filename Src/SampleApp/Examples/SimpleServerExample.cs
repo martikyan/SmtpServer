@@ -1,7 +1,7 @@
-﻿using System;
-using System.Threading;
-using SmtpServer;
+﻿using SmtpServer;
 using SmtpServer.Tracing;
+using System;
+using System.Threading;
 
 namespace SampleApp.Examples
 {
@@ -29,14 +29,14 @@ namespace SampleApp.Examples
             serverTask.WaitWithoutException();
         }
 
-        static void OnSessionCreated(object sender, SessionEventArgs e)
+        private static void OnSessionCreated(object sender, SessionEventArgs e)
         {
             Console.WriteLine("Session Created.");
 
             e.Context.CommandExecuting += OnCommandExecuting;
         }
 
-        static void OnCommandExecuting(object sender, SmtpCommandExecutingEventArgs e)
+        private static void OnCommandExecuting(object sender, SmtpCommandExecutingEventArgs e)
         {
             Console.WriteLine("Command Executing.");
 

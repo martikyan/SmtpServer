@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
+﻿using SmtpServer;
+using SmtpServer.IO;
+using SmtpServer.Net;
+using System;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using SmtpServer;
-using SmtpServer.IO;
-using SmtpServer.Net;
 
 namespace SampleApp.Examples
 {
@@ -19,11 +18,7 @@ namespace SampleApp.Examples
 
             var options = new SmtpServerOptionsBuilder()
                 .ServerName("SmtpServer SampleApp")
-                .Certificate(CreateCertificate())
-                .Endpoint(builder =>
-                    builder
-                        .Port(9025, true)
-                        .AllowUnsecureAuthentication(false))
+                .Endpoint(b => b.Port(9025))
                 .EndpointListenerFactory(new CustomEndpointListenerFactory())
                 .Build();
 
@@ -31,7 +26,7 @@ namespace SampleApp.Examples
 
             var serverTask = server.StartAsync(cancellationTokenSource.Token);
 
-            SampleMailClient.Send(useSsl: true);
+            SampleMailClient.Send();
 
             cancellationTokenSource.Cancel();
             serverTask.WaitWithoutException();
@@ -47,7 +42,7 @@ namespace SampleApp.Examples
 
         public sealed class CustomEndpointListener : IEndpointListener
         {
-            readonly IEndpointListener _endpointListener;
+            private readonly IEndpointListener _endpointListener;
 
             public CustomEndpointListener(IEndpointListener endpointListener)
             {
@@ -69,7 +64,7 @@ namespace SampleApp.Examples
 
         public sealed class CustomNetworkStream : INetworkStream
         {
-            readonly INetworkStream _innerStream;
+            private readonly INetworkStream _innerStream;
 
             public CustomNetworkStream(INetworkStream innerStream)
             {
@@ -110,17 +105,6 @@ namespace SampleApp.Examples
             }
 
             public bool IsSecure => _innerStream.IsSecure;
-        }
-
-        static X509Certificate2 CreateCertificate()
-        {
-            // to create an X509Certificate for testing you need to run MAKECERT.EXE and then PVK2PFX.EXE
-            // http://www.digitallycreated.net/Blog/38/using-makecert-to-create-certificates-for-development
-
-            var certificate = File.ReadAllBytes(@"C:\Users\cain\Dropbox\Documents\Cain\Programming\SmtpServer\SmtpServer.pfx");
-            var password = File.ReadAllText(@"C:\Users\cain\Dropbox\Documents\Cain\Programming\SmtpServer\SmtpServerPassword.txt");
-
-            return new X509Certificate2(certificate, password);
         }
     }
 }

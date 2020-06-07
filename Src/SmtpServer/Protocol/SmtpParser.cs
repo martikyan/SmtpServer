@@ -1,10 +1,10 @@
+using SmtpServer.Mail;
+using SmtpServer.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net;
-using SmtpServer.Mail;
-using SmtpServer.Text;
 
 namespace SmtpServer.Protocol
 {
@@ -16,10 +16,11 @@ namespace SmtpServer.Protocol
     {
         #region Tokens
 
-        static class Tokens
+        private static class Tokens
         {
             // ReSharper disable InconsistentNaming
             internal static readonly Token Hyphen = Token.Create('-');
+
             internal static readonly Token Colon = Token.Create(':');
             internal static readonly Token LessThan = Token.Create('<');
             internal static readonly Token GreaterThan = Token.Create('>');
@@ -39,12 +40,13 @@ namespace SmtpServer.Protocol
                 internal static readonly Token Last = Token.Create("LAST");
                 internal static readonly Token IpVersionTag = Token.Create("IPv");
             }
+
             // ReSharper restore InconsistentNaming
         }
 
-        #endregion
+        #endregion Tokens
 
-        readonly ISmtpServerOptions _options;
+        private readonly ISmtpServerOptions _options;
 
         /// <summary>
         /// Constructor.
@@ -476,43 +478,6 @@ namespace SmtpServer.Protocol
         }
 
         /// <summary>
-        /// Make an AUTH command from the given enumerator.
-        /// </summary>
-        /// <param name="command">The AUTH command that is defined within the token enumerator.</param>
-        /// <param name="errorResponse">The error that indicates why the command could not be made.</param>
-        /// <returns>Returns true if a command could be made, false if not.</returns>
-        public bool TryMakeAuth(out SmtpCommand command, out SmtpResponse errorResponse)
-        {
-            command = null;
-            errorResponse = null;
-
-            Enumerator.Take();
-            Enumerator.Skip(TokenKind.Space);
-
-            if (Enum.TryParse(Enumerator.Take().Text, true, out AuthenticationMethod method) == false)
-            {
-                _options.Logger.LogVerbose("AUTH command requires a valid method (PLAIN or LOGIN)");
-
-                errorResponse = SmtpResponse.SyntaxError;
-                return false;
-            }
-
-            Enumerator.Take();
-
-            string parameter = null;
-            if (TryMake(TryMakeEnd) == false && TryMakeBase64(out parameter) == false)
-            {
-                _options.Logger.LogVerbose("AUTH parameter must be a Base64 encoded string");
-
-                errorResponse = SmtpResponse.SyntaxError;
-                return false;
-            }
-
-            command = new AuthCommand(_options, method, parameter);
-            return true;
-        }
-
-        /// <summary>
         /// Try to make a reverse path.
         /// </summary>
         /// <param name="mailbox">The reverse path that was made, or undefined if it was not made.</param>
@@ -811,9 +776,9 @@ namespace SmtpServer.Protocol
         public bool TryMakeIpVersion(out int version)
         {
             version = default;
-            
+
             if (Enumerator.Take() != Tokens.Text.IpVersionTag)
-            { 
+            {
                 return false;
             }
 
@@ -841,7 +806,7 @@ namespace SmtpServer.Protocol
             while (token.Kind == TokenKind.Number || token.Kind == TokenKind.Text)
             {
                 if (hexNumber != null && (hexNumber.Length + token.Text.Length) > 4)
-                { 
+                {
                     return false;
                 }
 
@@ -849,7 +814,7 @@ namespace SmtpServer.Protocol
                 {
                     return false;
                 }
-                
+
                 hexNumber = string.Concat(hexNumber ?? string.Empty, token.Text);
 
                 Enumerator.Take();
@@ -926,7 +891,7 @@ namespace SmtpServer.Protocol
                     {
                         // Double column is allowed only once
                         if (hasDoubleColumn)
-                        { 
+                        {
                             return false;
                         }
                         hasDoubleColumn = true;
@@ -938,7 +903,7 @@ namespace SmtpServer.Protocol
                 else
                 {
                     if (wasColon == false && builder.Length > 0)
-                    { 
+                    {
                         return false;
                     }
 
@@ -960,7 +925,7 @@ namespace SmtpServer.Protocol
 
             var maxAllowedParts = (hasIpv4Part ? 6 : 8) - Math.Sign(hasDoubleColumn ? 1 : 0);
             if ((hasDoubleColumn && hexPartCount > maxAllowedParts) || (!hasDoubleColumn && hexPartCount != maxAllowedParts))
-            { 
+            {
                 return false;
             }
 
@@ -1020,7 +985,7 @@ namespace SmtpServer.Protocol
             var token = Enumerator.Take();
 
             textOrNumber = token.Text;
-            
+
             return token.Kind == TokenKind.Text || token.Kind == TokenKind.Number;
         }
 
@@ -1401,7 +1366,7 @@ namespace SmtpServer.Protocol
             // up several Base64 encoded "bytes" so we ensure that we have a length divisible by 4
             return base64 != null
                    && base64.Length % 4 == 0
-                   && new[] {TokenKind.None, TokenKind.Space, TokenKind.NewLine}.Contains(Enumerator.Peek().Kind);
+                   && new[] { TokenKind.None, TokenKind.Space, TokenKind.NewLine }.Contains(Enumerator.Peek().Kind);
         }
 
         /// <summary>
@@ -1410,7 +1375,7 @@ namespace SmtpServer.Protocol
         /// <param name="base64">The base64 encoded string that were found.</param>
         /// <returns>true if the base64 encoded string can be made, false if not.</returns>
         /// <remarks><![CDATA[ALPHA / DIGIT / "+" / "/"]]></remarks>
-        bool TryMakeBase64Text(out string base64)
+        private bool TryMakeBase64Text(out string base64)
         {
             base64 = null;
 
@@ -1428,7 +1393,7 @@ namespace SmtpServer.Protocol
         /// <param name="base64Chars">The base64 characters that were found.</param>
         /// <returns>true if the base64-chars can be made, false if not.</returns>
         /// <remarks><![CDATA[ALPHA / DIGIT / "+" / "/"]]></remarks>
-        bool TryMakeBase64Chars(out string base64Chars)
+        private bool TryMakeBase64Chars(out string base64Chars)
         {
             base64Chars = null;
 
@@ -1459,7 +1424,7 @@ namespace SmtpServer.Protocol
         /// Attempt to make the end of the line.
         /// </summary>
         /// <returns>true if the end of the line could be made, false if not.</returns>
-        bool TryMakeEnd()
+        private bool TryMakeEnd()
         {
             Enumerator.Skip(TokenKind.Space);
 
@@ -1470,11 +1435,9 @@ namespace SmtpServer.Protocol
         /// Returns the complete tokenized text.
         /// </summary>
         /// <returns>The complete tokenized text.</returns>
-        string CompleteTokenizedText()
+        private string CompleteTokenizedText()
         {
             return String.Concat(Enumerator.Tokens.Select(token => token.Text));
         }
-
-
     }
 }

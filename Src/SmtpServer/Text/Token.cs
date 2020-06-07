@@ -13,7 +13,7 @@ namespace SmtpServer.Text
         /// </summary>
         /// <param name="kind">The token kind.</param>
         /// <param name="text">The text that the token represents.</param>
-        Token(TokenKind kind, string text)
+        private Token(TokenKind kind, string text)
         {
             Kind = kind;
             Text = text;
@@ -89,7 +89,7 @@ namespace SmtpServer.Text
         /// <returns>The token kind for the given byte value.</returns>
         public static TokenKind KindOf(char value)
         {
-            return KindOf((byte) value);
+            return KindOf((byte)value);
         }
 
         /// <summary>
@@ -196,11 +196,11 @@ namespace SmtpServer.Text
         /// <param name="low">The lower value of the range.</param>
         /// <param name="high">The higher value of the range.</param>
         /// <returns>true if the value is between the range, false if not.</returns>
-        static bool IsBetween(byte value, byte low, byte high)
+        private static bool IsBetween(byte value, byte low, byte high)
         {
             return value >= low && value <= high;
         }
-        
+
         /// <summary>
         /// Indicates whether this instance and a specified object are equal.
         /// </summary>
@@ -218,7 +218,7 @@ namespace SmtpServer.Text
         /// <returns>true if <paramref name="obj"/> and this instance are the same type and represent the same value; otherwise, false. </returns>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) 
+            if (ReferenceEquals(null, obj))
             {
                 return false;
             }
